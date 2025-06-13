@@ -1,0 +1,50 @@
+<script setup lang="ts">
+import useConfigStore from '@/store/modules/layout'
+import { computed } from 'vue'
+import Logo from './Logo.vue'
+
+const config = useConfigStore()
+const menuWidth = computed(() => config.menuWidth())
+</script>
+
+<template>
+  <el-aside
+    :class="
+      'layout-aside-' +
+      config.layout.layoutMode +
+      ' ' +
+      (config.layout.shrink ? 'shrink' : '')
+    "
+  >
+    <logo v-if="config.layout.menuShowTopBar"></logo>
+    菜单位置
+  </el-aside>
+</template>
+
+<style lang="scss" scoped>
+.layout-aside-Default {
+  background: var(--ba-bg-color-overlay);
+  margin: 16px 0 16px 16px;
+  height: calc(100vh - 32px);
+  box-shadow: var(--el-box-shadow-light);
+  border-radius: var(--el-border-radius-base);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  width: v-bind(menuWidth);
+}
+.layout-aside-Classic,
+.layout-aside-Double {
+  background: var(--ba-bg-color-overlay);
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  width: v-bind(menuWidth);
+}
+.shrink {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999999;
+}
+</style>
