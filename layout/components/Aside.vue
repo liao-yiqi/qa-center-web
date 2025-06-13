@@ -2,6 +2,7 @@
 import useConfigStore from '@/store/modules/layout'
 import { computed } from 'vue'
 import Logo from './Logo.vue'
+import MenuVertical from '../menus/MenuVertical.vue'
 
 const config = useConfigStore()
 const menuWidth = computed(() => config.menuWidth())
@@ -17,7 +18,7 @@ const menuWidth = computed(() => config.menuWidth())
     "
   >
     <logo v-if="config.layout.menuShowTopBar"></logo>
-    菜单位置
+    <MenuVertical />
   </el-aside>
 </template>
 

@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import Layout from '@/layout/index.vue'
 import { afterEach, beforeEach } from './routerInterceptor'
+// 公共路由
 export const constantRoutes: RouteRecordRaw[] = [
   {
     path: '',
