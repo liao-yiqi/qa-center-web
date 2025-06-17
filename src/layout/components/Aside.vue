@@ -6,6 +6,10 @@ import MenuVertical from '../menus/MenuVertical.vue'
 
 const config = useConfigStore()
 const menuWidth = computed(() => config.menuWidth())
+
+defineOptions({
+  name: 'layout/aside',
+})
 </script>
 
 <template>
@@ -17,7 +21,7 @@ const menuWidth = computed(() => config.menuWidth())
       (config.layout.shrink ? 'shrink' : '')
     "
   >
-    <logo v-if="config.layout.menuShowTopBar"></logo>
+    <Logo v-if="config.layout.menuShowTopBar"></Logo>
     <MenuVertical />
   </el-aside>
 </template>

@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import Layout from '@/layout/index.vue'
 import { afterEach, beforeEach } from './routerInterceptor'
+import usersRouter from './modules/user'
 // 公共路由
 export const constantRoutes: RouteRecordRaw[] = [
   {
@@ -13,20 +14,30 @@ export const constantRoutes: RouteRecordRaw[] = [
         path: '/index',
         component: () => import('@/views/index.vue'),
         name: 'Index',
-        meta: { title: '首页', icon: 'dashboard', affix: true },
+        meta: { title: 'Dashboard', icon: 'dashboard', affix: true },
       },
     ],
   },
   {
     path: '/login',
     component: () => import('@/views/login/login.vue'),
-    meta: { hidden: true },
+    hidden: true,
   },
 ]
 
+// 模块路由
+export const moduleRoutes: RouteRecordRaw[] = [...usersRouter]
+
 const router = createRouter({
   history: createWebHistory(),
-  routes: constantRoutes,
+  routes: [...constantRoutes, ...moduleRoutes],
+  scrollBehavior(_to, _from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 })
 
 beforeEach(router)

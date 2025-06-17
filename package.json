@@ -30,6 +30,7 @@
     "sass": "1.63.6",
     "typescript": "~5.8.3",
     "unplugin-auto-import": "^19.3.0",
+    "unplugin-vue-components": "^28.7.0",
     "unplugin-vue-setup-extend-plus": "^1.0.1",
     "vite": "^6.3.5",
     "vite-plugin-compression2": "^2.0.1",

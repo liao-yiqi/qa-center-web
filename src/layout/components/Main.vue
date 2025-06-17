@@ -1,5 +1,13 @@
 <script setup lang="ts"></script>
 
-<template>Main</template>
+<template>
+  <el-main class="main">
+    <router-view> </router-view>
+  </el-main>
+</template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.main {
+  padding: 0;
+}
+</style>

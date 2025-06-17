@@ -2,6 +2,7 @@
 import NProgress from 'nprogress'
 import type { Router } from 'vue-router'
 import loading from '@/utils/loading.ts'
+import usePermissionStore from '../store/modules/permission'
 
 NProgress.configure({ showSpinner: true })
 // const whiteList = ['/login', '/register']
@@ -11,6 +12,10 @@ export const beforeEach = (router: Router) => {
     if (!window.existLoading) {
       window.existLoading = true
       loading.show()
+    }
+    const permissionStore = usePermissionStore()
+    if (permissionStore.routes.length === 0) {
+      permissionStore.generateRoutes()
     }
     /* if (whiteList.indexOf(to.path) !== -1) {
       next()
