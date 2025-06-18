@@ -1,5 +1,10 @@
+<template>
+  <svg :class="svgClass" aria-hidden="true" :style="{ fontSize: size }">
+    <use :href="iconName" :fill="color" />
+  </svg>
+</template>
+
 <script setup lang="ts">
-import { computed } from 'vue'
 type Props = {
   iconClass: string
   className?: string
@@ -23,13 +28,7 @@ const svgClass = computed(() => {
 })
 </script>
 
-<template>
-  <svg :class="svgClass" aria-hidden="true" :style="{ fontSize: size }">
-    <use :href="iconName" :fill="color" />
-  </svg>
-</template>
-
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .sub-el-icon,
 .nav-icon {
   display: inline-block;

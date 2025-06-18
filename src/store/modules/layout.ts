@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { reactive } from 'vue'
+import { STORE_CONFIG } from '@/store/constant/cacheKey.ts'
 
-const useConfigStore = defineStore(
+const useConfig = defineStore(
   'config',
   () => {
     const layout: LayoutState = reactive({
@@ -57,6 +57,33 @@ const useConfigStore = defineStore(
       // 菜单是否折叠
       return layout.menuCollapse ? '64px' : layout.menuWidth + 'px'
     }
+
+    function onSetLayoutColor(data = layout.layoutMode) {
+      // 切换布局时，如果是为默认配色方案，对菜单激活背景色重新赋值
+      const tempValue = layout.isDark
+        ? { idx: 1, color: '#1d1e1f', newColor: '#141414' }
+        : { idx: 0, color: '#ffffff', newColor: '#f5f5f5' }
+      if (
+        data == 'Classic' &&
+        layout.headerBarBackground[tempValue.idx] == tempValue.color &&
+        layout.headerBarTabActiveBackground[tempValue.idx] == tempValue.color
+      ) {
+        layout.headerBarTabActiveBackground[tempValue.idx] = tempValue.newColor
+      } else if (
+        data == 'Default' &&
+        layout.headerBarBackground[tempValue.idx] == tempValue.color &&
+        layout.headerBarTabActiveBackground[tempValue.idx] == tempValue.newColor
+      ) {
+        layout.headerBarTabActiveBackground[tempValue.idx] = tempValue.color
+      }
+    }
+    const setLayout = (name: keyof LayoutState, value: any) => {
+      layout[name] = value as never
+    }
+    function setLayoutMode(data: LayoutMode) {
+      layout.layoutMode = data
+      onSetLayoutColor(data)
+    }
     const getColorVal = function (name: keyof LayoutState) {
       const colors = layout[name] as string[]
       if (layout.isDark) {
@@ -65,16 +92,20 @@ const useConfigStore = defineStore(
         return colors[0]
       }
     }
-    const setLayout = (name: keyof LayoutState, value: any) => {
-      layout[name] = value as never
-    }
     return {
       layout,
       menuWidth,
-      getColorVal,
+      setLayoutMode,
       setLayout,
+      getColorVal,
+      onSetLayoutColor,
     }
   },
-  { persist: { key: 'storeConfig' } }
+  {
+    persist: {
+      key: STORE_CONFIG,
+    },
+  }
 )
-export default useConfigStore
+
+export default useConfig

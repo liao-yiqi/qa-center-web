@@ -1,32 +1,35 @@
 <script setup lang="ts">
-import useConfigStore from '@/store/modules/layout'
-import LocalStorage from '@/utils/useStorage'
+import { BEFORE_RESIZE_LAYOUT } from '@/store/constant/cacheKey.ts'
+import useConfig from '@/store/modules/layout.ts'
+import Local from '@/utils/hsj/useStorage'
 
 const title = import.meta.env.VITE_APP_TITLE
-const config = useConfigStore()
+const config = useConfig()
 
+const setNavTabsWidth = () => {
+  const navTabs: HTMLDivElement = document.querySelector('.nav-tabs')!
+  if (!navTabs) {
+    return
+  }
+  const navBar: HTMLDivElement = document.querySelector('.nav-bar')!
+  const navMenus: HTMLDivElement = document.querySelector('.nav-menus')!
+  const minWidth = navBar?.offsetWidth - (navMenus.offsetWidth + 20)
+  navTabs.style.width = minWidth.toString() + 'px'
+}
 const closeShade = function (closeCallBack?: () => void) {
   const shadeEl = document.querySelector('.ba-layout-shade')
   shadeEl && shadeEl.remove()
   closeCallBack && closeCallBack()
 }
 
-const setNavTabsWidth = () => {
-  const navTabs: HTMLDivElement = document.querySelector('.nav-tabs')!
-  if (!navTabs) return
-  const navBar: HTMLDivElement = document.querySelector('.nav-bar')!
-  const navMenus: HTMLDivElement = document.querySelector('.nav-menus')!
-  const minWidth = navBar?.offsetWidth - (navMenus.offsetWidth + 20)
-  navTabs.style.width = minWidth.toString() + 'px'
-}
-
 const onMenuCollapse = () => {
   if (config.layout.shrink && !config.layout.menuCollapse) {
     closeShade()
   }
+
   config.setLayout('menuCollapse', !config.layout.menuCollapse)
 
-  LocalStorage.set('beforeResizeLayout', {
+  Local.set(BEFORE_RESIZE_LAYOUT, {
     layoutMode: config.layout.layoutMode,
     menuCollapse: config.layout.menuCollapse,
   })
@@ -37,7 +40,6 @@ const onMenuCollapse = () => {
   }, 350)
 }
 </script>
-
 <template>
   <div class="layout-logo">
     <img
@@ -54,18 +56,18 @@ const onMenuCollapse = () => {
       {{ title }}
     </div>
     <svg-icon
+      @click="onMenuCollapse"
       v-if="config.layout.layoutMode != 'Streamline'"
       :color="config.getColorVal('menuActiveColor')"
       :iconClass="config.layout.menuCollapse ? 'indent' : 'dedent'"
       size="18"
       class="fold"
       :class="config.layout.menuCollapse ? 'unfold' : ''"
-      @click="onMenuCollapse"
     />
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .layout-logo {
   width: 100%;
   height: 50px;
@@ -75,27 +77,27 @@ const onMenuCollapse = () => {
   box-sizing: border-box;
   padding: 10px;
   background: v-bind(
-    'config.layout.layoutMode !== "Streamline"?config.getColorVal("menuTopBarBackground"):"transparent"'
+    'config.layout.layoutMode != "Streamline" ?  config.getColorVal("menuTopBarBackground"):"transparent"'
   );
-  .logo-img {
-    width: 28px;
-  }
-  .website-name {
-    flex: 1;
-    display: block;
-    padding-left: 4px;
-    font-size: var(--el-font-size-extra-large);
-    font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .fold {
-    margin-left: auto;
-    cursor: pointer;
-  }
-  .unfold {
-    margin: 0 auto;
-  }
+}
+.logo-img {
+  width: 28px;
+}
+.website-name {
+  flex: 1;
+  display: block;
+  padding-left: 4px;
+  font-size: var(--el-font-size-extra-large);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fold {
+  margin-left: auto;
+  cursor: pointer;
+}
+.unfold {
+  margin: 0 auto;
 }
 </style>

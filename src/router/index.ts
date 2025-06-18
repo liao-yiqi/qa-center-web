@@ -1,10 +1,26 @@
-import { createWebHistory, createRouter } from 'vue-router'
-import type { RouteRecordRaw } from 'vue-router'
+import { createWebHistory, createRouter, RouteRecordRaw } from 'vue-router'
+import { beforeEach, afterEach } from './routerInterceptor'
+import usersRouter from "./modules/users";
 import Layout from '@/layout/index.vue'
-import { afterEach, beforeEach } from './routerInterceptor'
-import usersRouter from './modules/user'
+
 // 公共路由
 export const constantRoutes: RouteRecordRaw[] = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index.vue'),
+      },
+    ],
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('@/views/error/404.vue'),
+    hidden: true,
+  },
   {
     path: '',
     component: Layout,
@@ -25,12 +41,14 @@ export const constantRoutes: RouteRecordRaw[] = [
   },
 ]
 
-// 模块路由
-export const moduleRoutes: RouteRecordRaw[] = [...usersRouter]
+// 动态路由，基于用户权限动态去加载
+export const dynamicRoutes: RouteRecordRaw[] = []
+
+export const modulesRouter: RouteRecordRaw[] = [...usersRouter]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [...constantRoutes, ...moduleRoutes],
+  routes: [...constantRoutes, ...modulesRouter],
   scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) {
       return savedPosition

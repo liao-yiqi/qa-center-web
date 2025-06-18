@@ -1,5 +1,7 @@
 <script setup lang="ts"></script>
 
-<template>Users Pages</template>
+<template>
+  <div>Users Pages</div>
+</template>
 
 <style lang="scss" scoped></style>

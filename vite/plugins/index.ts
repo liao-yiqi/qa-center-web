@@ -1,10 +1,11 @@
 import vue from '@vitejs/plugin-vue'
 import setupExtend from 'unplugin-vue-setup-extend-plus/vite'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 import createAutoImport from './auto-import'
 import createSvgIcon from './svg-icon'
 import createCompression from './compression'
-export default function createVitePulgins(
+import vueJsx from '@vitejs/plugin-vue-jsx'
+
+export default function createVitePlugins(
   viteEnv: Record<string, string>,
   isBuild = false
 ) {

@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import useConfigStore from '@/store/modules/layout'
-import { computed } from 'vue'
+import useConfig from '@/store/modules/layout.ts'
 import Logo from './Logo.vue'
 import MenuVertical from '../menus/MenuVertical.vue'
 
-const config = useConfigStore()
+const config = useConfig()
+
 const menuWidth = computed(() => config.menuWidth())
 
 defineOptions({
   name: 'layout/aside',
 })
 </script>
-
 <template>
   <el-aside
     :class="
@@ -26,7 +25,7 @@ defineOptions({
   </el-aside>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .layout-aside-Default {
   background: var(--ba-bg-color-overlay);
   margin: 16px 0 16px 16px;

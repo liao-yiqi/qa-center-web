@@ -1,28 +1,23 @@
-import type { RouteRecordRaw } from 'vue-router'
-import router, { constantRoutes, moduleRoutes } from '@/router/index'
+import { RouteRecordRaw } from 'vue-router'
+import auth from '@/plugins/auth'
+import { constantRoutes, modulesRouter } from '@/router/index'
 import Layout from '@/layout/index.vue'
 import ParentView from '@/components/ParentView/index.vue'
 import InnerLink from '@/layout/components/InnerLink/index.vue'
 
-// 预加载 views 目录所有 vue 组件
+// 匹配views里面所有的.vue文件
 const modules = import.meta.glob('./../../views/**/*.vue')
 
-interface PermiState {
-  routes: RouteRecordRaw[]
-  addRoutes: RouteRecordRaw[]
-  defaultRoutes: RouteRecordRaw[]
-  topbarRouters: RouteRecordRaw[]
-  sidebarRouters: RouteRecordRaw[]
-}
-
 const usePermissionStore = defineStore('permission', {
-  state: (): PermiState => ({
-    routes: [],
-    addRoutes: [],
-    defaultRoutes: [],
-    topbarRouters: [],
-    sidebarRouters: [],
-  }),
+  state: (): PermiState => {
+    return {
+      routes: [],
+      addRoutes: [],
+      defaultRoutes: [],
+      topbarRouters: [],
+      sidebarRouters: [],
+    }
+  },
   actions: {
     setRoutes(routes: RouteRecordRaw[]) {
       this.addRoutes = routes
@@ -39,20 +34,19 @@ const usePermissionStore = defineStore('permission', {
     },
     generateRoutes() {
       return new Promise<RouteRecordRaw[]>((resolve) => {
-        const stateRoute = [...constantRoutes, ...moduleRoutes]
+        const stateRoute = [...constantRoutes, ...modulesRouter]
         this.setRoutes(stateRoute)
         this.setSidebarRouters(stateRoute)
-        resolve(constantRoutes)
+        this.setDefaultRoutes(stateRoute)
+        this.setTopbarRoutes(stateRoute)
+        resolve(stateRoute)
       })
     },
   },
 })
 
-// 过滤路由，把字符串组件替换成真正的组件
-function filterAsyncRouter(
-  asyncRouterMap: RouteRecordRaw[],
-  type = false
-): RouteRecordRaw[] {
+// 遍历后台传来的路由字符串，转换为组件对象
+function filterAsyncRouter(asyncRouterMap: RouteRecordRaw[], type = false) {
   return asyncRouterMap.filter((route) => {
     if (type && route.children) {
       route.children = filterChildren(route.children)
@@ -86,45 +80,58 @@ function filterAsyncRouter(
 }
 
 function filterChildren(
-  children: RouteRecordRaw[],
+  childrenMap: RouteRecordRaw[],
   lastRouter?: RouteRecordRaw
-): RouteRecordRaw[] {
-  let childrenRoutes: RouteRecordRaw[] = []
-  children.forEach((child) => {
-    if (child.children && child.children.length) {
+) {
+  let children: RouteRecordRaw[] = []
+  childrenMap.forEach((el) => {
+    if (el.children && el.children.length) {
       // @ts-ignore
-      if (child.component === 'ParentView' && !lastRouter) {
+      if (el.component === 'ParentView' && !lastRouter) {
         // @ts-ignore
-        child.children.forEach((c) => {
+        el.children.forEach((c) => {
           // @ts-ignore
-          c.path = child.path + '/' + c.path
+          c.path = el.path + '/' + c.path
           if (c.children && c.children.length) {
-            childrenRoutes = childrenRoutes.concat(
-              filterChildren(c.children, c)
-            )
+            children = children.concat(filterChildren(c.children, c))
             return
           }
-          childrenRoutes.push(c)
+          children.push(c)
         })
         return
       }
     }
     if (lastRouter) {
-      child.path = lastRouter.path + '/' + child.path
-      if (child.children && child.children.length) {
-        childrenRoutes = childrenRoutes.concat(
-          filterChildren(child.children, child)
-        )
+      el.path = lastRouter.path + '/' + el.path
+      if (el.children && el.children.length) {
+        children = children.concat(filterChildren(el.children, el))
         return
       }
     }
-    childrenRoutes.push(child)
+    children = children.concat(el)
   })
-  return childrenRoutes
+  return children
 }
 
-const loadView = (view: string) => {
-  let res: any = null
+// 动态路由遍历，验证是否具备权限
+export function filterDynamicRoutes(routes: RouteRecordRaw[]) {
+  const res: RouteRecordRaw[] = []
+  routes.forEach((route) => {
+    if (route.permissions) {
+      if (auth.hasPermiOr(route.permissions)) {
+        res.push(route)
+      }
+    } else if (route.roles) {
+      if (auth.hasRoleOr(route.roles)) {
+        res.push(route)
+      }
+    }
+  })
+  return res
+}
+
+export const loadView = (view: string) => {
+  let res
   for (const path in modules) {
     const dir = path.split('views/')[1].split('.vue')[0]
     if (dir === view) {

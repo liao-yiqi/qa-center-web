@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RouteRecordRaw } from 'vue-router'
+import { RouteRecordRaw } from 'vue-router'
 import { isExternal } from '@/utils/validate.ts'
 import AppLink from './Link.vue'
 import { getNormalPath } from '@/utils/ruoyi'

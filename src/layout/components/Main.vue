@@ -1,12 +1,31 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import useTagsViewStore from '@/store/modules/tagsView'
+import useConfig from '@/store/modules/layout'
+import IframeToggle from './IframeToggle/index.vue'
 
+const tagsViewStore = useTagsViewStore()
+const config = useConfig()
+</script>
 <template>
   <el-main class="main">
-    <router-view> </router-view>
+    <router-view v-slot="{ Component, route }">
+      <transition :name="config.layout.mainAnimation" mode="out-in">
+        <keep-alive :include="tagsViewStore.cachedViews">
+          <component
+            v-if="!route.meta.link"
+            :is="Component"
+            :key="route.path"
+          />
+        </keep-alive>
+      </transition>
+    </router-view>
+    <div class="default-main">
+      <IframeToggle />
+    </div>
   </el-main>
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .main {
   padding: 0;
 }

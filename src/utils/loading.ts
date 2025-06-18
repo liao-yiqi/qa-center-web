@@ -1,5 +1,5 @@
-import '@/assets/styles/loading.scss'
 import { nextTick } from 'vue'
+import '@/assets/css/loading.scss'
 
 export default {
   show: () => {
@@ -28,7 +28,7 @@ export default {
       setTimeout(() => {
         const el = document.querySelector('.block-loading')
         el && el.parentNode?.removeChild(el)
-      }, 600)
+      }, 500)
     })
   },
 }
