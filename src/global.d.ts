@@ -169,6 +169,7 @@ interface PermiState {
   defaultRoutes: PermissionRouterRaw[]
   topbarRouters: PermissionRouterRaw[]
   sidebarRouters: PermissionRouterRaw[]
+  routesLoaded: boolean
 }
 // tagsViewStore
 interface TagsViewState {

@@ -1,9 +1,10 @@
 import { RouteRecordRaw } from 'vue-router'
 import auth from '@/plugins/auth'
-import { constantRoutes, modulesRouter } from '@/router/index'
+import router, { constantRoutes, modulesRouter } from '@/router/index'
 import Layout from '@/layout/index.vue'
 import ParentView from '@/components/ParentView/index.vue'
 import InnerLink from '@/layout/components/InnerLink/index.vue'
+import session from '@/utils/hsj/useSession'
 
 // 匹配views里面所有的.vue文件
 const modules = import.meta.glob('./../../views/**/*.vue')
@@ -16,6 +17,7 @@ const usePermissionStore = defineStore('permission', {
       defaultRoutes: [],
       topbarRouters: [],
       sidebarRouters: [],
+      routesLoaded: false,
     }
   },
   actions: {
@@ -34,12 +36,29 @@ const usePermissionStore = defineStore('permission', {
     },
     generateRoutes() {
       return new Promise<RouteRecordRaw[]>((resolve) => {
-        const stateRoute = [...constantRoutes, ...modulesRouter]
+        /* const stateRoute = [...constantRoutes, ...modulesRouter]
         this.setRoutes(stateRoute)
         this.setSidebarRouters(stateRoute)
         this.setDefaultRoutes(stateRoute)
         this.setTopbarRoutes(stateRoute)
-        resolve(stateRoute)
+        resolve(stateRoute) */
+        const sessionData = session.get('SESSION_ROUTES')
+        const sdata: RouteRecordRaw[] = JSON.parse(sessionData)
+        const rdata: RouteRecordRaw[] = JSON.parse(sessionData)
+        const defaultData: RouteRecordRaw[] = JSON.parse(sessionData)
+        const sessionRoutes = filterAsyncRouter(JSON.parse(sessionData))
+        sessionRoutes.forEach((route) => {
+          router.addRoute(route)
+        })
+        const siderbarRoutes = filterAsyncRouter(sdata)
+        const rewriteRoutes = filterAsyncRouter(rdata, true)
+        const defaultRoutes = filterAsyncRouter(defaultData)
+        this.setRoutes(rewriteRoutes)
+        this.setSidebarRouters([...constantRoutes, ...modulesRouter])
+        // this.setSidebarRouters(siderbarRoutes)
+        this.setDefaultRoutes(siderbarRoutes)
+        this.setTopbarRoutes(defaultRoutes)
+        resolve(rewriteRoutes)
       })
     },
   },

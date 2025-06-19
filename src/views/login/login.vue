@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import session from '@/utils/hsj/useSession'
 import { ElMessage } from 'element-plus'
 import type { LocationQueryValue } from 'vue-router'
 const redirect = ref<LocationQueryValue | LocationQueryValue[]>('')
@@ -38,6 +39,7 @@ const handleLogin = () => {
     path: (redirect.value as string) || '/',
     query: otherQueryParams,
   })
+  session.set('SESSION_ROUTES', JSON.stringify([]))
 }
 </script>
 

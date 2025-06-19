@@ -179,9 +179,9 @@ const restoreDefault = () => {
                     <div class="layout-mode-style-name">单栏</div>
                   </div>
                 </el-col>
-                <el-col :span="12">
+                <!-- <el-col :span="12">
                   <div
-                    @click="setLayoutMode('Double')"
+                    @click="setLayoutMode('Classic')"
                     class="layout-mode-style double"
                     :class="
                       configStore.layout.layoutMode == 'Double' ? 'active' : ''
@@ -196,7 +196,7 @@ const restoreDefault = () => {
                     </div>
                     <div class="layout-mode-style-name">双栏</div>
                   </div>
-                </el-col>
+                </el-col> -->
               </el-row>
             </div>
             <el-divider border-style="dashed"> 全局 </el-divider>

@@ -1,7 +1,12 @@
 import { createWebHistory, createRouter, RouteRecordRaw } from 'vue-router'
 import { beforeEach, afterEach } from './routerInterceptor'
-import usersRouter from "./modules/users";
 import Layout from '@/layout/index.vue'
+import usersRouter from './modules/users'
+import toolsRouter from './modules/tools'
+import seleniumHubRouter from './modules/seleniumHub'
+import reportCenterRouter from './modules/reportCenter'
+import settingRouter from './modules/setting'
+import panelRouter from './modules/panel'
 
 // 公共路由
 export const constantRoutes: RouteRecordRaw[] = [
@@ -44,11 +49,21 @@ export const constantRoutes: RouteRecordRaw[] = [
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes: RouteRecordRaw[] = []
 
-export const modulesRouter: RouteRecordRaw[] = [...usersRouter]
+// 模块路由
+export const modulesRouter: RouteRecordRaw[] = [
+  ...toolsRouter,
+  ...seleniumHubRouter,
+  ...reportCenterRouter,
+  ...usersRouter,
+  ...settingRouter,
+]
+
+// 详情路由
+export const detailsRouter: RouteRecordRaw[] = [...panelRouter]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [...constantRoutes, ...modulesRouter],
+  routes: [...constantRoutes, ...modulesRouter, ...detailsRouter],
   scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) {
       return savedPosition

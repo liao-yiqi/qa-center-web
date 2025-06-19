@@ -110,9 +110,6 @@
           </div>
         </div>
         <div class="admin-info-footer">
-          <el-button @click="onAdminInfo" type="primary" plain>
-            个人资料
-          </el-button>
           <el-button @click="onLogout" type="danger" plain>退出登录</el-button>
         </div>
       </div>
@@ -145,6 +142,7 @@ import useUsers from '@/store/modules/user'
 import Config from '../components/Config/index.vue'
 import GlobalSearch from '../components/GlobalSearch/index.vue'
 import { proxy } from '@/utils/provide'
+import session from '@/utils/hsj/useSession'
 const configStore = useConfig()
 const router = useRouter()
 const state = reactive({
@@ -195,16 +193,10 @@ const onLogout = () => {
     type: 'warning',
   })
     .then(() => {
+      session.set('SESSION_ROUTES', JSON.stringify([]))
       router.push('/login')
     })
     .catch(() => {})
-}
-
-const onAdminInfo = () => {
-  state.showAdminInfoPopover = false
-  router.push({
-    path: '/user/profile',
-  })
 }
 </script>
 

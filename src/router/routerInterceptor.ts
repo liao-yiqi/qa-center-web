@@ -1,13 +1,11 @@
 import loading from '@/utils/loading'
-import { getToken } from '@/utils/auth'
-import useUserStore from '@/store/modules/user.ts'
 import usePermissionStore from '@/store/modules/permission'
 import NProgress from 'nprogress'
 import { Router } from 'vue-router'
 NProgress.configure({ showSpinner: false })
-const whiteList = ['/login', '/register']
+// const whiteList = ['/login', '/register']
 export const beforeEach = (router: Router) => {
-  router.beforeEach((to, _from, next) => {
+  router.beforeEach(async (to, _from, next) => {
     NProgress.start()
     if (!window.existLoading) {
       loading.show()
@@ -16,9 +14,13 @@ export const beforeEach = (router: Router) => {
     document.title = to.meta.title ?? import.meta.env.VITE_APP_TITLE
     const permissionStore = usePermissionStore()
     if (permissionStore.routes.length === 0) {
-      permissionStore.generateRoutes()
+      await permissionStore.generateRoutes()
+      // 确保路由已经加在完成
+      permissionStore.routesLoaded = true
+      next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+    } else {
+      next()
     }
-    next()
   })
 }
 export const afterEach = (router: Router) => {
