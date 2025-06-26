@@ -42,7 +42,8 @@ const usePermissionStore = defineStore('permission', {
         this.setDefaultRoutes(stateRoute)
         this.setTopbarRoutes(stateRoute)
         resolve(stateRoute) */
-        const sessionData = session.get('SESSION_ROUTES')
+        const Session_Routes = session.get('SESSION_ROUTES')
+        const sessionData = Session_Routes ? Session_Routes : '[]'
         const sdata: RouteRecordRaw[] = JSON.parse(sessionData)
         const rdata: RouteRecordRaw[] = JSON.parse(sessionData)
         const defaultData: RouteRecordRaw[] = JSON.parse(sessionData)

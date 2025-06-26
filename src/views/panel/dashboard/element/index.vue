@@ -20,7 +20,6 @@ const handleProjectChange = (val: number) => {
   const selectedProject = projectOptions.value.find((item) => item.id === val)
   projectInfo.value = selectedProject
 }
-const panelStore = usePanel()
 
 const cardItems: { top: string; bottom: string }[] = [
   { top: 'Project', bottom: 'Management' },
@@ -45,12 +44,14 @@ const routerInfo = [
   },
 ]
 
+const panelStore = usePanel()
 const onCheck = () => {
   const validProjectInfo =
     projectInfo.value && Object.keys(projectInfo.value).length > 0
   if (!validProjectInfo) return ElMessage.warning('Please select a project')
   addRoutes(routerInfo)
   router.push('/elementManagement/elementDetails')
+  panelStore.setPanelValue(projectInfo.value!)
 }
 </script>
 

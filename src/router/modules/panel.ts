@@ -11,6 +11,7 @@ const panelRouter: RouteRecordRaw[] = [
         path: 'panelDetail',
         component: () => import('@/views/panel/index.vue'),
         hidden: true,
+        name: 'panelDetail',
         meta: { title: 'PanelDetail' },
       },
     ],
